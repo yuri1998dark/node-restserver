@@ -1,4 +1,5 @@
-const express = require("express") 
+const express = require("express"); 
+const { dbConnection } = require("../database/config");
 
 
 class Server {
@@ -7,7 +8,10 @@ class Server {
         this.app = express();
         this.port = process.env.PORT;
         this.usuariosPath = '/api/usuarios'
-        
+        //conectar a la base de datos
+    
+        this.conectarDB()
+
         this.middlewares()
         
         //rutas de mi aplicacion
@@ -15,7 +19,12 @@ class Server {
         
     
     }
-    
+
+    async conectarDB(){
+        await dbConnection()
+    }
+     
+
     middlewares(){
         
         //Parseo y lectura del body

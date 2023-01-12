@@ -1,6 +1,7 @@
 //Rutas relacionadas a los usuarios 
 
 const {Router} = require('express');
+const { check } = require('express-validator');
 const { usuariosGet, 
         usuariosDelete, 
         usuariosPost, 
@@ -8,8 +9,13 @@ const { usuariosGet,
 
 const router = Router();
 
+
+
 router.get('/',usuariosGet);
-router.post('/',usuariosPost);
+router.post('/',[
+    check('correo','El correo no es valido').isEmail(),
+    check('nombre','El nombre es obligatoriooooo').not().isEmpty()
+],usuariosPost);
 router.delete('/',usuariosDelete);
 router.put('/',usuariosPut)
 
@@ -18,4 +24,4 @@ router.get('*',(req,res) => {
 });
 
 
-module.exports = router;
+module.exports = router;    
