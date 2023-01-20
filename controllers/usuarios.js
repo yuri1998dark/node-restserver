@@ -7,11 +7,22 @@ const { validationResult } = require('express-validator');
 const usuariosGet = async(req,res)=>{
     
     const {limite = 5, desde = 0 } = req.query;
-    const usuarios = await Usuario.find().skip(Number(desde)).limit(Number(limite));
+    const query = {estado:true}
+    //const usuarios = await Usuario.find(query).skip(Number(desde)).limit(Number(limite));
+    //const total = await Usuario.countDocuments(query);
+
+    //Arreglo de promesas que se ejecutan al mismo modo
+    const [total,usuarios] = await Promise.all([
+        Usuario.countDocuments(query),
+        Usuario.find(query).skip(Number(desde)).limit(Number(limite)),
+
+    ])
 
     res.json({
+        total,
         ok:true,
-        usuarios
+        usuarios,
+        
     })
 };
 
@@ -59,10 +70,15 @@ const usuariosPut = async (req,res)=>{
     })
 };
 
-const usuariosDelete = (req,res)=>{
+const usuariosDelete = async(req,res)=>{
+
+    const {id} = req.params;
+    const query = {estado:false}
+
+    const deleteUser = await Usuario.findByIdAndUpdate(id,query);
+    
     res.json({
-        ok:true,
-        msg:"delete Api - controller"
+        deleteUser
     })
 }
 

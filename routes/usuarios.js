@@ -14,6 +14,7 @@ const { validarCampos } = require('../middlewares/validar-campos');
 const router = Router();
 
 router.get('/',usuariosGet);
+
 router.post('/',[
     check('nombre','El campo nombre no puede estar vacio').not().isEmpty(),
     check('password','El password debe contener mas de 6 letras').isLength({min:6}),
@@ -22,16 +23,19 @@ router.post('/',[
     //check('rol','No es un rol valido').isIn(['ADMIN_ROLE','USER_ROLE ']),
     check('rol').custom(esRolevalido),
     validarCampos
-],usuariosPost);
-router.delete('/',usuariosDelete);
+    ],usuariosPost);
+router.delete('/:id',[
+    check('id','El id no es valido').isMongoId(),
+    check('id').custom(exiteIdEnDb),
+    validarCampos
+    ],usuariosDelete);
 router.put('/:id',[
     check('id','El id no es valido').isMongoId(),
     check('id').custom(exiteIdEnDb),
     check('correo').custom(validarvsCorreo),
     check('rol').custom(esRolevalido),
     validarCampos
-]
-,usuariosPut)
+    ],usuariosPut)
 
 router.get('*',(req,res) => {
     res.send('Error 404')
